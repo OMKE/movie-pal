@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from exceptions import NotPreparedException, UnableToPredictUserCluster
+from .exceptions import NotPreparedException, UnableToPredictUserCluster
 import pickle
 import pandas as pd
 
@@ -49,13 +49,16 @@ class MovieRecommender:
         result = []
         for movie_id in movies_ids_result:
             title = list(self.movies_data[self.movies_data['movieId'] == movie_id]['title'])
+            genres = list(self.movies_data[self.movies_data['movieId'] == movie_id]['genres'])
             if title:
                 prepared_title = str(title).split('[')[1].split(']')[0].strip("'")
+                prepared_genres = str(genres).split('[')[1].split(']')[0].strip("'")
                 if as_dict:
                     prepared_title_splitted = prepared_title.split('~')
                     prepared_title = {
                         'title': prepared_title_splitted[0].strip(),
-                        'year': prepared_title_splitted[1].strip()
+                        'year': prepared_title_splitted[1].strip(),
+                        'genres': prepared_genres.split("|")
                     }
                 result.append(prepared_title)
         return result[:limit]
@@ -95,12 +98,14 @@ class MovieRecommender:
         return pd.read_csv(path, usecols=cols)
 
 if __name__ == '__main__':
+    from os.path import abspath
+
     movie_rcmd = MovieRecommender(
-        'trained_models/kmeans-trained-model.pkl',
-        'datasets/clusters_movies_dataset.pkl',
-        'datasets/users_clusters.pkl',
-        'trained_models/count-vectorizer-model.pkl',
-        'datasets/movie.csv'
+        abspath('./trained_models/kmeans-trained-model.pkl'),
+        abspath('./datasets/clusters_movies_dataset.pkl'),
+        abspath('./datasets/users_clusters.pkl'),
+        abspath('./trained_models/count-vectorizer-model.pkl'),
+        abspath('./datasets/movie.csv')
     )
     movie_rcmd.prepare(['14,21,50,56,109,23,221,180,161,240,236,320,369,413'])
     recommeded_movies = movie_rcmd.recommend(as_dict=True)
