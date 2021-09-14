@@ -3,6 +3,6 @@ export interface Movie {
     title: string;
     year: string;
     genres: string[];
-    poster?: string;
-    imdbRating?: string;
+    poster: string;
+    imdbRating: string;
 }

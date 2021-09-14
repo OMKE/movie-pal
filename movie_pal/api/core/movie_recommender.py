@@ -33,16 +33,18 @@ class MovieRecommender:
         self.movie_ids_that_user_reviewed = [movie_id.strip() for movie_id in splitted_movies_ids]
 
 
+
     def recommend(self, limit=15, as_dict=False):
         if len(self.movies_ids) == 0:
             raise NotPreparedException()
         # Kopiramo listu kako ne bi radili sa pravim podacima
         movies_ids_result = self.movies_ids.copy()
+
         # Prodjemo kroz sve filmove koje je korisnik ocijenio
         for user_movie in self.movie_ids_that_user_reviewed:
             # ako se film nalazi u klasteru u kom trazimo (movie_ids_result), uklonit cemo ga
-            if user_movie in movies_ids_result:
-                movies_ids_result.remove(user_movie)
+            if int(user_movie) in movies_ids_result:
+                movies_ids_result.remove(int(user_movie))
         # Rezultujuci skup koji cemo popuniti na osnovu id-jeva filmova koje smo prethodno dobili
         # Pogledat cemo da li se podudara sa filmom iz self.movies_data (movie.csv), uzet cemo njegov naslov
         # Ako je as_dict=True, filmovi ce se vracati kao string, u suprotnom kao rjecnik
@@ -107,6 +109,6 @@ if __name__ == '__main__':
         abspath('./trained_models/count-vectorizer-model.pkl'),
         abspath('./datasets/movie.csv')
     )
-    movie_rcmd.prepare(['14,21,50,56,109,23,221,180,161,240,236,320,369,413'])
-    recommeded_movies = movie_rcmd.recommend(as_dict=True)
+    movie_rcmd.prepare(['1,32,284,41,312,285,460,202,304,232,251'])
+    recommeded_movies = movie_rcmd.recommend(as_dict=True, limit=15)
     print(recommeded_movies)
